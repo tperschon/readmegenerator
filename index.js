@@ -114,13 +114,15 @@ inquirer
 
 # Table of Contents
 
-\`\`\`
 [Description](#Description)
+
 [Installation](#Installation)
+
 [Usage](#Usage)
+
 [Contributing](#Contributing)
+
 [Tests](#Tests)
-\`\`\`
 
 # Description
 \`\`\`
@@ -149,8 +151,7 @@ ${res.contributing}
 
 \`\`\`
 ${res.tests}
-\`\`\`
-`;
+\`\`\``;
         fs.writeFile(`./${res.title}/readme.md`, readmeContent, function () { })
     }
 );
