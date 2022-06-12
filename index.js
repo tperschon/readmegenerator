@@ -111,15 +111,20 @@ inquirer
         // create the readme text, inserting our user's answers
         let readmeContent = `
 [![License](${badge[0]})](${badge[1]})
-# Description
-\`\`\`
-${res.descr}
-\`\`\`
 
 # Table of Contents
 
 \`\`\`
-[Installation](# Installation)
+[Description](#Description)
+[Installation](#Installation)
+[Usage](#Usage)
+[Contributing](#Contributing)
+[Tests](#Tests)
+\`\`\`
+
+# Description
+\`\`\`
+${res.descr}
 \`\`\`
 
 # Installation
