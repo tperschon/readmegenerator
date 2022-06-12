@@ -23,7 +23,7 @@ THEN this is added to the section of the README entitled Questions, with instruc
 WHEN I click on the links in the Table of Contents
 ```
 
-[Installation](#-Installation)
+[Installation](#Installation)
 ```
 a
 ```
