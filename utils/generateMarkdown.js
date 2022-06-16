@@ -14,10 +14,55 @@ function renderLicenseLink(license) {
 }
 
 // TODO: Create a function to generate markdown for README
-function generateMarkdown(data) {
-  return `# ${data.title}
+function generateMarkdown(data, licObj) {
+  return `
+[![License](${renderLicenseBadge(licObj)})](${renderLicenseLink(licObj)})
 
-`;
-}
+# Table of Contents
 
-module.exports = renderLicenseBadge, renderLicenseRaw, renderLicenseLink, generateMarkdown;
+[Description](#Description)
+
+[Installation](#Installation)
+
+[Usage](#Usage)
+
+[Contributing](#Contributing)
+
+[Tests](#Tests)
+
+# Description
+\`\`\`
+${data.descr}
+\`\`\`
+
+# Installation
+
+\`\`\`
+${data.install}
+\`\`\`
+
+# Usage
+
+\`\`\`
+${data.usage}
+\`\`\`
+
+# Contributing
+
+\`\`\`
+${data.contributing}
+\`\`\`
+
+# Tests
+
+\`\`\`
+${data.tests}
+\`\`\``;
+};
+
+module.exports = {
+  renderLicenseBadge,
+  renderLicenseRaw,
+  renderLicenseLink,
+  generateMarkdown
+};

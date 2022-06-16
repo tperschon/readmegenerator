@@ -2,6 +2,7 @@
 const inquirer = require('inquirer');
 const https = require('https');
 const fs = require('fs');
+const markdown = require('./utils/generateMarkdown.js')
 // urls for license templates
 const licenses = [
     {
@@ -23,45 +24,86 @@ const licenses = [
         link: 'https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html'
     }
 ];
+// array of question objects for user
+const questions = [
+    {
+        type: 'input',
+        message: 'What is your name?',
+        name: 'username',
+    },
+    {
+        type: 'input',
+        message: 'What is your project\'s name?',
+        name: 'title',
+    },
+    {
+        type: 'input',
+        message: 'Please enter a brief description of your project:',
+        name: 'descr',
+    },
+    {
+        type: 'editor',
+        message: 'Please give some instructions for how to install the project (save when done):',
+        name: 'install',
+    },
+    {
+        type: 'editor',
+        message: 'Please describe how to use the project (save when done):',
+        name: 'usage',
+    },
+    {
+        type: 'input',
+        message: 'Please give a link for how to contribute to the project:',
+        name: 'contr',
+    },
+    {
+        type: 'list',
+        message: 'Please select a license type:',
+        name: 'license',
+        choices: licenses.map(license => license.name),
+    },
+    {
+        type: 'editor',
+        message: 'Please write some tests for the project (save when done):',
+        name: 'tests',
+    },
+];
 
-function getLicense(lic, name, title) {
-    // initialize url for conditional assignment
-    let url;
-    // determine which URLs to use
-    if(lic === "MIT") {
-        url = MITUrl;
-        badge = MITBadge;
+// use a user-picked license name to get the appropriate license object from the license object array
+function pickLicense(pickedName) {
+    for (license of licenses) {
+        if (pickedName === license.name) {
+            return license;
+        };
+    };
+};
+
+// takes in a license, its name/type, and the user's name to morph the license
+function formatLicense(license, licenseType, userName) {
+    // if Apache license is being used
+    if(licenseType === "Apache") {
+        // replace year and name in license template
+        license = license.replace("yyyy", new Date().getFullYear());
+        license = license.replace("name of copyright owner", userName);
     }
-    else if (lic === "Apache") {
-        url = apacheUrl;
-        badge = apacheBadge;
-    }
-    else if (lic === "GPL") {
-        url = GPLUrl;
-        badge = GPLBadge;
-    }
+    // if another license is being used
+    else {
+        // replace year and name in license template
+        license = license.replace("{{ year }}", `[${new Date().getFullYear()}]`);
+        license = license.replace("{{ organization }}", `[${userName}]`);
+    };
+};
+
+function getLicense(data, licObj) {
     // GET request to URL
-    https.get(url, res => {
+    https.get(renderLicense, res => {
         // on data from promise
         res.on('data', d => {
             // base license string
             var license = d.toString();
-            console.log(license)
-            console.log(license.length)
-            // if Apache license is being used
-            if(lic === "Apache") {
-                // replace year and name in license template
-                license = license.replace("yyyy", new Date().getFullYear());
-                license = license.replace("name of copyright owner", name);
-            }
-            // if another license is being used
-            else {
-                // replace year and name in license template
-                license = license.replace("{{ year }}", `[${new Date().getFullYear()}]`);
-                license = license.replace("{{ organization }}", `[${name}]`);
-            };
+            // format license
+            formatLicense(license, data.license, data.username)
             // write the license to a text file
-            console.log(license.length)
             fs.appendFile(`./${title}/license.txt`, license, function(){});
         });
     });
@@ -69,98 +111,17 @@ function getLicense(lic, name, title) {
 
 // ask user questions
 inquirer
-    .prompt([
-        {
-            type: 'input',
-            message: 'What is your name?',
-            name: 'username',
-        },
-        {
-            type: 'input',
-            message: 'What is your project\'s name?',
-            name: 'title',
-        },
-        {
-            type: 'input',
-            message: 'Please enter a brief description of your project:',
-            name: 'descr',
-        },
-        {
-            type: 'editor',
-            message: 'Please give some instructions for how to install the project (save when done):',
-            name: 'install',
-        },
-        {
-            type: 'editor',
-            message: 'Please describe how to use the project (save when done):',
-            name: 'usage',
-        },
-        {
-            type: 'input',
-            message: 'Please give a link for how to contribute to the project:',
-            name: 'contr',
-        },
-        {
-            type: 'list',
-            message: 'Please select a license type:',
-            name: 'license',
-            choices: ['MIT', 'Apache', 'GPL'],
-        },
-        {
-            type: 'editor',
-            message: 'Please write some tests for the project (save when done):',
-            name: 'tests',
-        },
-    ])
+    .prompt(questions)
     .then((res) => {
+        // pick our license
+        let licObj = pickLicense(res.license);
         // make a new folder for our project
         fs.mkdir(`./${res.title}`, function(){})
         // create a license file for our project
-        getLicense(res.license, res.username, res.title);
+        getLicense(res, licObj);
         // create the readme text, inserting our user's answers
-        let readmeContent = `
-[![License](${badge[0]})](${badge[1]})
-
-# Table of Contents
-
-[Description](#Description)
-
-[Installation](#Installation)
-
-[Usage](#Usage)
-
-[Contributing](#Contributing)
-
-[Tests](#Tests)
-
-# Description
-\`\`\`
-${res.descr}
-\`\`\`
-
-# Installation
-
-\`\`\`
-${res.install}
-\`\`\`
-
-# Usage
-
-\`\`\`
-${res.usage}
-\`\`\`
-
-# Contributing
-
-\`\`\`
-${res.contributing}
-\`\`\`
-
-# Tests
-
-\`\`\`
-${res.tests}
-\`\`\``;
-        fs.writeFile(`./${res.title}/readme.md`, readmeContent, function () { })
+        fs.writeFile(`./${res.title}/readme.md`, markdown.generateMarkdown(res, licObj), function (err) { 
+            console.log(err);
+        });
     }
 );
