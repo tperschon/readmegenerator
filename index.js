@@ -83,15 +83,15 @@ function getLicense(data, licObj) {
     // GET request to URL
     https.get(markdown.renderLicenseRaw(licObj), res => {
         // empty data initialization
-        let whole = "";
+        let license = "";
         // on data from promise
         res.on('data', d => {
-            whole += d;
+            license += d;
         })
         // on completion of promise
         res.on('end', () => {
-            // base license string
-            let license = whole.toString();
+            // convert license to a string
+            license = license.toString();
             // if Apache license is being used
             if (licObj.name === "Apache") {
                 // replace year and name in license template
@@ -104,13 +104,15 @@ function getLicense(data, licObj) {
                 license = license.replace("{{ year }}", `[${new Date().getFullYear()}]`);
                 license = license.replace("{{ organization }}", `[${data.username}]`);
             };
-            // write the license to a text file
+            // write the license to a text file, throwing any errors we get and logging a message when file is writen so users knows
             fs.appendFile(`./${data.title}/license.txt`, license, function (err) {
-                // if there is an error, throw it
                 if (err) throw err;
-                // log a message each time data is written so the user knows something happened
                 console.log(`Writing data to ${data.title}/license.txt`)
             });
+        })
+        // if there's an error, print it to the console
+        res.on('error', err => {
+            console.log(`Error: ${err}`)
         });
     });
 };
@@ -118,23 +120,19 @@ function getLicense(data, licObj) {
 // ask user questions
 inquirer.prompt(questions)
     // with the data from questions
-    .then((res) => {
+    .then(res => {
         // pick our license
         let licObj = pickLicense(res.license);
-        // make a new folder for our project
+        // make a new folder for our project, throw errors, log message when file created
         fs.mkdir(`./${res.title}`, function (err) {
-            // if there is an error, throw it
             if (err) throw err;
-            // log a message when the folder is created so the user knows
             console.log(`Created new folder '${res.title}'`)
         });
         // create a license file for our project
         getLicense(res, licObj);
-        // create the readme text, inserting our user's answers
+        // create the readme text, inserting our user's answers, throw errors, log message when file created
         fs.writeFile(`./${res.title}/readme.md`, markdown.generateMarkdown(res, licObj), function (err) {
-            // if there is an error, throw it
             if (err) throw err;
-            // log a message when the file is created so the user knows
             console.log(`Created ${res.title}/readme.md`);
         });
     });
