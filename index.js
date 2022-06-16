@@ -82,10 +82,16 @@ function pickLicense(pickedName) {
 function getLicense(data, licObj) {
     // GET request to URL
     https.get(markdown.renderLicenseRaw(licObj), res => {
+        // empty data initialization
+        let whole = "";
         // on data from promise
         res.on('data', d => {
+            whole += d;
+        })
+        // on completion of promise
+        res.on('end', () => {
             // base license string
-            let license = d.toString();
+            let license = whole.toString();
             // if Apache license is being used
             if (licObj.name === "Apache") {
                 // replace year and name in license template
