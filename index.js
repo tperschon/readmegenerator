@@ -3,17 +3,26 @@ const inquirer = require('inquirer');
 const https = require('https');
 const fs = require('fs');
 // urls for license templates
-MITUrl = 'https://raw.githubusercontent.com/licenses/license-templates/master/templates/mit.txt';
-apacheUrl = 'https://www.apache.org/licenses/LICENSE-2.0.txt';
-GPLUrl = 'https://raw.githubusercontent.com/licenses/license-templates/master/templates/gpl2.txt';
-// urls for license badges
-MITBadge = ['https://img.shields.io/badge/License-MIT-yellow.svg', 'https://opensource.org/licenses/MIT'];
-apacheBadge = ['https://img.shields.io/badge/License-Apache_2.0-blue.svg', 'https://opensource.org/licenses/Apache-2.0'];
-GPLBadge = ['https://img.shields.io/badge/License-GPL_v2-blue.svg', 'https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html'];
-
-let badge;
-
-console.log(new Date().getFullYear())
+const licenses = [
+    {
+        name: 'MIT',
+        raw: 'https://raw.githubusercontent.com/licenses/license-templates/master/templates/mit.txt',
+        image: 'https://img.shields.io/badge/License-MIT-yellow.svg',
+        link: 'https://opensource.org/licenses/MIT'
+    },
+    {
+        name: 'Apache',
+        raw: 'https://www.apache.org/licenses/LICENSE-2.0.txt',
+        image: 'https://img.shields.io/badge/License-Apache_2.0-blue.svg',
+        link: 'https://opensource.org/licenses/Apache-2.0'
+    },
+    {
+        name: 'GPL',
+        raw: 'https://raw.githubusercontent.com/licenses/license-templates/master/templates/gpl2.txt',
+        image: 'https://img.shields.io/badge/License-GPL_v2-blue.svg',
+        link: 'https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html'
+    }
+];
 
 function getLicense(lic, name, title) {
     // initialize url for conditional assignment
