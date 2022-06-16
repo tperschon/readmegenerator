@@ -24,6 +24,7 @@ const licenses = [
         link: 'https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html'
     }
 ];
+
 // array of question objects for user
 const questions = [
     {
@@ -78,50 +79,56 @@ function pickLicense(pickedName) {
     };
 };
 
-// takes in a license, its name/type, and the user's name to morph the license
-function formatLicense(license, licenseType, userName) {
-    // if Apache license is being used
-    if(licenseType === "Apache") {
-        // replace year and name in license template
-        license = license.replace("yyyy", new Date().getFullYear());
-        license = license.replace("name of copyright owner", userName);
-    }
-    // if another license is being used
-    else {
-        // replace year and name in license template
-        license = license.replace("{{ year }}", `[${new Date().getFullYear()}]`);
-        license = license.replace("{{ organization }}", `[${userName}]`);
-    };
-};
-
 function getLicense(data, licObj) {
     // GET request to URL
-    https.get(renderLicense, res => {
+    https.get(markdown.renderLicenseRaw(licObj), res => {
         // on data from promise
         res.on('data', d => {
             // base license string
-            var license = d.toString();
-            // format license
-            formatLicense(license, data.license, data.username)
+            let license = d.toString();
+            // if Apache license is being used
+            if (licObj.name === "Apache") {
+                // replace year and name in license template
+                license = license.replace("yyyy", new Date().getFullYear());
+                license = license.replace("name of copyright owner", data.username);
+            }
+            // if another license is being used
+            else {
+                // replace year and name in license template
+                license = license.replace("{{ year }}", `[${new Date().getFullYear()}]`);
+                license = license.replace("{{ organization }}", `[${data.username}]`);
+            };
             // write the license to a text file
-            fs.appendFile(`./${title}/license.txt`, license, function(){});
+            fs.appendFile(`./${data.title}/license.txt`, license, function (err) {
+                // if there is an error, throw it
+                if (err) throw err;
+                // log a message each time data is written so the user knows something happened
+                console.log(`Writing data to ${data.title}/license.txt`)
+            });
         });
     });
 };
 
 // ask user questions
-inquirer
-    .prompt(questions)
+inquirer.prompt(questions)
+    // with the data from questions
     .then((res) => {
         // pick our license
         let licObj = pickLicense(res.license);
         // make a new folder for our project
-        fs.mkdir(`./${res.title}`, function(){})
+        fs.mkdir(`./${res.title}`, function (err) {
+            // if there is an error, throw it
+            if (err) throw err;
+            // log a message when the folder is created so the user knows
+            console.log(`Created new folder '${res.title}'`)
+        });
         // create a license file for our project
         getLicense(res, licObj);
         // create the readme text, inserting our user's answers
-        fs.writeFile(`./${res.title}/readme.md`, markdown.generateMarkdown(res, licObj), function (err) { 
-            console.log(err);
+        fs.writeFile(`./${res.title}/readme.md`, markdown.generateMarkdown(res, licObj), function (err) {
+            // if there is an error, throw it
+            if (err) throw err;
+            // log a message when the file is created so the user knows
+            console.log(`Created ${res.title}/readme.md`);
         });
-    }
-);
+    });
