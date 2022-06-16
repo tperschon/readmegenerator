@@ -2,7 +2,8 @@
 const inquirer = require('inquirer');
 const https = require('https');
 const fs = require('fs');
-const markdown = require('./utils/generateMarkdown.js')
+const markdown = require('./utils/generateMarkdown.js');
+
 // urls for license templates
 const licenses = [
     {
@@ -61,6 +62,7 @@ const questions = [
         type: 'list',
         message: 'Please select a license type:',
         name: 'license',
+        // map the name from each object in our object array to a new array to present as choices
         choices: licenses.map(license => license.name),
     },
     {
@@ -105,7 +107,7 @@ function getLicense(data, licObj) {
                 license = license.replace("{{ organization }}", `[${data.username}]`);
             };
             // write the license to a text file, throwing any errors we get and logging a message when file is writen so users knows
-            fs.appendFile(`./${data.title}/license.txt`, license, function (err) {
+            fs.appendFile(`./${data.title}/license.txt`, license, err => {
                 if (err) throw err;
                 console.log(`Writing data to ${data.title}/license.txt`)
             });
@@ -124,14 +126,14 @@ inquirer.prompt(questions)
         // pick our license
         let licObj = pickLicense(res.license);
         // make a new folder for our project, throw errors, log message when file created
-        fs.mkdir(`./${res.title}`, function (err) {
+        fs.mkdir(`./${res.title}`, err => {
             if (err) throw err;
             console.log(`Created new folder '${res.title}'`)
         });
         // create a license file for our project
         getLicense(res, licObj);
         // create the readme text, inserting our user's answers, throw errors, log message when file created
-        fs.writeFile(`./${res.title}/readme.md`, markdown.generateMarkdown(res, licObj), function (err) {
+        fs.writeFile(`./${res.title}/readme.md`, markdown.generateMarkdown(res, licObj), err => {
             if (err) throw err;
             console.log(`Created ${res.title}/readme.md`);
         });
