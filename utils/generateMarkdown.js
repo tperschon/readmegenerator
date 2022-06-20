@@ -15,45 +15,41 @@ function renderLicenseLink(license) {
 
 // using input data and picked license object, return markup with pertinent information inserted
 function generateMarkdown(data, licObj) {
-  return `
-[![License](${renderLicenseBadge(licObj)})](${renderLicenseLink(licObj)})
+  let markdown = '';
+if(data.license) markdown += `[![License](${renderLicenseBadge(licObj)})](${renderLicenseLink(licObj)})
 
 # Table of Contents
 
-[Description](#Description)
-
-[Installation](#Installation)
-
-[Usage](#Usage)
-
-[Contributing](#Contributing)
-
-[Tests](#Tests)
-
-# Description
+[Description](#Description)\n\n`
+if(data.installation) markdown += '[Installation](#Installation)\n\n';
+if(data.usage) markdown += '[Usage](#Usage)\n\n';
+if(data.contributing) markdown += '[Contributing](#Contributing)\n\n';
+if(data.tests) markdown += '[Tests](#Tests)\n\n';
+if(data.description || data.motivation || data.whybuild || data.problem || data.learned) markdown += '# Description';
+if(data.description) markdown += `\`\`\`
+${data.description}
+\`\`\``;
+if(data.motivation) markdown += `- ${data.motivation}`;
+if(data.whybuild) markdown += `- ${data.whybuild}`;
+if(data.problem) markdown += `- ${data.problem}`;
+if(data.learned) markdown += `- ${data.learned}`;
+if(data.installation) markdown += `# Installation
 \`\`\`
-${data.descr}
-\`\`\`
-- ${data.motivation}
-- ${data.whybuild}
-- ${data.problem}
-- ${data.learned}
-# Installation
-\`\`\`
-${data.install}
-\`\`\`
-# Usage
+${data.installation}
+\`\`\``
+if(data.usage) markdown += `# Usage
 \`\`\`
 ${data.usage}
-\`\`\`
-# Contributing
-If you would like to contribute to the project, it can be found here: [${data.title}](${data.contr})
-# Tests
+\`\`\``
+if(data.contributing) markdown += `# Contributing
+If you would like to contribute to the project, it can be found here: [${data.title}](${data.contr})`
+if(data.tests) markdown += `# Tests
 \`\`\`
 ${data.tests}
-\`\`\`
-# Questions
+\`\`\``
+if(data.email && data.github) markdown += `# Questions
 If you have any questions, I can be reached via: [Github](github.com/${data.github}) and [E-Mail](${data.email})`;
+  return markdown;
 };
 
 module.exports = {

@@ -41,7 +41,7 @@ const questions = [
     {
         type: 'input',
         message: 'Please enter a brief description of your project:',
-        name: 'descr',
+        name: 'description',
     },
     {
         type: 'input',
@@ -66,7 +66,7 @@ const questions = [
     {
         type: 'editor',
         message: 'Please give instructions for how to install the project (save when done):',
-        name: 'install',
+        name: 'installation',
     },
     {
         type: 'editor',
@@ -151,21 +151,35 @@ function getLicense(data, licObj) {
 };
 
 // ask user questions
-inquirer.prompt(questions)
+inquirer.prompt(
+    {
+        type: 'checkbox',
+        message: 'Which featuers would you like to include?',
+        name: 'features',
+        choices: questions.map(q => q.name)
+    }
+).then(res => {
+    let asked = questions.filter(q => {
+        if(res.features.includes(q.name)) return q;
+    })
+    return asked;
+}).then(asked => {
+    inquirer.prompt(asked)
     // with the data from questions
     .then(res => {
         // pick our license
-        let licObj = pickLicense(res.license);
+        if(res.license) var licObj = pickLicense(res.license);
         // make a new folder for our project, throw errors, log message when file created
         fs.mkdir(`./${res.title}`, err => {
             if (err) throw err;
             console.log(`Created new folder '${res.title}'`)
         });
         // create a license file for our project
-        getLicense(res, licObj);
+        if(res.license) getLicense(res, licObj);
         // create the readme text, inserting our user's answers, throw errors, log message when file created
         fs.writeFile(`./${res.title}/readme.md`, markdown.generateMarkdown(res, licObj), err => {
             if (err) throw err;
             console.log(`Created ${res.title}/readme.md`);
         });
     });
+});
