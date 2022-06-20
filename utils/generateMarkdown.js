@@ -13,7 +13,7 @@ function renderLicenseLink(license) {
   return (license.link ? license.link : "");
 }
 
-// TODO: Create a function to generate markdown for README
+// using input data and picked license object, return markup with pertinent information inserted
 function generateMarkdown(data, licObj) {
   return `
 [![License](${renderLicenseBadge(licObj)})](${renderLicenseLink(licObj)})
