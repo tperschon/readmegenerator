@@ -76,7 +76,7 @@ const questions = [
     {
         type: 'input',
         message: 'Please give a link for how to contribute to the project:',
-        name: 'contr',
+        name: 'contributing',
     },
     {
         type: 'list',
@@ -102,13 +102,14 @@ const questions = [
     },
 ];
 
-// use a user-picked license name to get the appropriate license object from the license object array
+// use a user-picked license name to get the appropriate license object from the license object array, default to MIT if something goes wrong
 function pickLicense(pickedName) {
     for (license of licenses) {
         if (pickedName === license.name) {
             return license;
         };
     };
+    return licenses[0];
 };
 
 function getLicense(data, licObj) {
@@ -116,7 +117,7 @@ function getLicense(data, licObj) {
     https.get(markdown.renderLicenseRaw(licObj), res => {
         // empty data initialization
         let license = "";
-        // on data from promise
+        // on data from promise, add to license data
         res.on('data', d => {
             license += d;
         })
