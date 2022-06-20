@@ -1,6 +1,4 @@
-
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
 # Table of Contents
 
 [Description](#Description)
@@ -12,6 +10,8 @@
 [Contributing](#Contributing)
 
 [Tests](#Tests)
+
+[Credits](#Credits)
 
 # Description
 ```
@@ -73,3 +73,9 @@ This works because said file is imported into index.js and then is referenced wi
 ```
 # Questions
 If you have any questions, I can be reached via: [Github](github.com/tperschon) and [E-Mail](timperschon@gmail.com)
+# Credits
+Github and whoever maintains the repository of license templates [here](https://github.com/licenses).
+
+[Apache](https://www.apache.org/) for hosting and allow GET requests for their license [here](https://www.apache.org/licenses/LICENSE-2.0.txt)
+
+[Inquirer](https://www.npmjs.com/package/inquirer) for maintaining an easily usable node module for prompting users for input.
