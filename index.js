@@ -44,8 +44,28 @@ const questions = [
         name: 'descr',
     },
     {
+        type: 'input',
+        message: 'What was your motivation?',
+        name: 'motivation',
+    },
+    {
+        type: 'input',
+        message: 'Why did you build this project?',
+        name: 'whybuild',
+    },
+    {
+        type: 'input',
+        message: 'What problem does it solve?',
+        name: 'problem',
+    },
+    {
+        type: 'input',
+        message: 'What did you learn?',
+        name: 'learned',
+    },
+    {
         type: 'editor',
-        message: 'Please give some instructions for how to install the project (save when done):',
+        message: 'Please give instructions for how to install the project (save when done):',
         name: 'install',
     },
     {
@@ -69,6 +89,16 @@ const questions = [
         type: 'editor',
         message: 'Please write some tests for the project (save when done):',
         name: 'tests',
+    },
+    {
+        type: 'input',
+        message: 'Please enter your Github username:',
+        name: 'github',
+    },
+    {
+        type: 'input',
+        message: 'Please your email address',
+        name: 'email',
     },
 ];
 

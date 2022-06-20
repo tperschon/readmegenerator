@@ -34,30 +34,26 @@ function generateMarkdown(data, licObj) {
 \`\`\`
 ${data.descr}
 \`\`\`
-
+- ${data.motivation}
+- ${data.whybuild}
+- ${data.problem}
+- ${data.learned}
 # Installation
-
 \`\`\`
 ${data.install}
 \`\`\`
-
 # Usage
-
 \`\`\`
 ${data.usage}
 \`\`\`
-
 # Contributing
-
-\`\`\`
-${data.contributing}
-\`\`\`
-
+If you would like to contribute to the project, it can be found here: [${data.title}](${data.contr})
 # Tests
-
 \`\`\`
 ${data.tests}
-\`\`\``;
+\`\`\`
+# Questions
+If you have any questions, I can be reached via: [Github](github.com/${data.github}) and [E-Mail](${data.email})`;
 };
 
 module.exports = {
