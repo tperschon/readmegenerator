@@ -26,27 +26,27 @@ if(data.usage) markdown += '[Usage](#Usage)\n\n';
 if(data.contributing) markdown += '[Contributing](#Contributing)\n\n';
 if(data.tests) markdown += '[Tests](#Tests)\n\n';
 if(data.description || data.motivation || data.whybuild || data.problem || data.learned) markdown += '# Description';
-if(data.description) markdown += `\`\`\`
+if(data.description) markdown += `\`\`\`\n
 ${data.description}
-\`\`\``;
+\`\`\`\n`;
 if(data.motivation) markdown += `- ${data.motivation}`;
 if(data.whybuild) markdown += `- ${data.whybuild}`;
 if(data.problem) markdown += `- ${data.problem}`;
 if(data.learned) markdown += `- ${data.learned}`;
 if(data.installation) markdown += `# Installation
-\`\`\`
+\`\`\`\n
 ${data.installation}
-\`\`\``
+\`\`\`\n`
 if(data.usage) markdown += `# Usage
-\`\`\`
+\`\`\`\n
 ${data.usage}
-\`\`\``
+\`\`\`\n`
 if(data.contributing) markdown += `# Contributing
-If you would like to contribute to the project, it can be found here: [${data.title}](${data.contr})`
+If you would like to contribute to the project, it can be found here: [${data.title}](${data.contributing})`
 if(data.tests) markdown += `# Tests
-\`\`\`
+\`\`\`\n
 ${data.tests}
-\`\`\``
+\`\`\`\n`
 if(data.email && data.github) markdown += `# Questions
 If you have any questions, I can be reached via: [Github](github.com/${data.github}) and [E-Mail](${data.email})`;
   return markdown;
